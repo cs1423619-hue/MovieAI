@@ -1,76 +1,67 @@
-import json
 from datetime import datetime
+from typing import List, Optional
 
-from sqlalchemy import Boolean, Column, DateTime, Float, ForeignKey, Integer, String, Text
-from sqlalchemy.orm import relationship
-
-from app.database import Base
+from pydantic import BaseModel, EmailStr, Field
 
 
-class User(Base):
-    __tablename__ = "users"
-
-    id = Column(Integer, primary_key=True, index=True)
-    name = Column(String(100), nullable=False)
-    email = Column(String(150), unique=True, index=True, nullable=False)
-    password_hash = Column(String(255), nullable=False)
-    favorite_languages = Column(Text, default="[]")
-    favorite_genres = Column(Text, default="[]")
-    created_at = Column(DateTime, default=datetime.utcnow)
-
-    watchlist = relationship("WatchlistItem", back_populates="user", cascade="all, delete-orphan")
-    ratings = relationship("MovieRating", back_populates="user", cascade="all, delete-orphan")
-
-    def language_list(self):
-        return json.loads(self.favorite_languages or "[]")
-
-    def genre_list(self):
-        return json.loads(self.favorite_genres or "[]")
+class UserRegister(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100)
+    email: EmailStr
+    password: str = Field(..., min_length=6)
 
 
-class WatchlistItem(Base):
-    __tablename__ = "watchlist_items"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    tmdb_id = Column(Integer, nullable=False)
-    title = Column(String(200), nullable=True)
-    poster_path = Column(String(255), nullable=True)
-    added_at = Column(DateTime, default=datetime.utcnow)
-
-    user = relationship("User", back_populates="watchlist")
-
-    __table_args__ = ({"sqlite_autoincrement": True},)
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
 
-class MovieRating(Base):
-    __tablename__ = "movie_ratings"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    tmdb_id = Column(Integer, nullable=False)
-    movie_title = Column(String(200), nullable=True)
-    rating = Column(Float, nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
-
-    user = relationship("User", back_populates="ratings")
+class TokenResponse(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
-class UserPreference(Base):
-    __tablename__ = "user_preferences"
-
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False, unique=True)
-    favorite_languages = Column(Text, default="[]")
-    favorite_genres = Column(Text, default="[]")
-    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+class PreferencesUpdate(BaseModel):
+    favorite_languages: List[str] = []
+    favorite_genres: List[str] = []
 
 
-class SearchHistory(Base):
-    __tablename__ = "search_history"
+class UserOut(BaseModel):
+    id: int
+    name: str
+    email: str
+    favorite_languages: List[str] = []
+    favorite_genres: List[str] = []
+    created_at: Optional[datetime] = None
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=True)
-    query = Column(String(200), nullable=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    class Config:
+        orm_mode = True
+
+
+class WatchlistItemOut(BaseModel):
+    id: int
+    user_id: int
+    tmdb_id: int
+    title: Optional[str]
+    poster_path: Optional[str]
+    added_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True
+
+
+class RatingCreate(BaseModel):
+    tmdb_id: int
+    rating: float = Field(..., ge=1, le=10)
+    movie_title: Optional[str] = None
+
+
+class RatingOut(BaseModel):
+    id: int
+    user_id: int
+    tmdb_id: int
+    movie_title: Optional[str]
+    rating: float
+    created_at: Optional[datetime] = None
+
+    class Config:
+        orm_mode = True

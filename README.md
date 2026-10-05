@@ -1,25 +1,16 @@
 # MovieAI
 
-MovieAI is a production-style movie discovery and AI recommendation platform built with React + Vite on the frontend and FastAPI on the backend. It uses live TMDB data, secure authentication, watchlists, ratings, and a TF-IDF + cosine similarity engine for personalized recommendations.
+A full-stack movie discovery and recommendation platform powered by TMDB, FastAPI, React, and ML-based recommendations.
 
 ## Stack
-- Frontend: React, Vite, Tailwind CSS
-- Backend: FastAPI, SQLAlchemy, JWT auth
-- Data source: TMDB API
-- Recommendation engine: content-based TF-IDF + cosine similarity
-- Database: PostgreSQL-ready with SQLite fallback for local development
+- Frontend: React + Vite + Tailwind CSS
+- Backend: FastAPI + SQLAlchemy
+- Data: TMDB API
+- Recommendations: TF-IDF + cosine similarity
+- Auth: JWT + bcrypt
+- Database: PostgreSQL-ready with SQLite fallback
 
-## Features
-- Trending, latest, upcoming, and top-rated movie sections
-- Language and genre-based movie browsing
-- Global movie/person search
-- Movie detail page with similar movie suggestions
-- User authentication
-- Watchlist and rating APIs
-- Personalized AI recommendations based on preferences, watched movies, and ratings
-- Responsive premium UI
-
-## Setup
+## Local setup
 
 ### Backend
 ```bash
@@ -28,8 +19,7 @@ python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp ../.env.example ../.env
-# Fill in values in ../.env
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn app.main:app --reload --port 8000
 ```
 
 ### Frontend
@@ -39,7 +29,23 @@ npm install
 npm run dev
 ```
 
+## Backend endpoints
+- /api/health
+- /api/movies/trending
+- /api/movies/latest
+- /api/movies/top-rated
+- /api/movies/upcoming
+- /api/movies/language/{language}
+- /api/movies/genre/{genre}
+- /api/movies/search
+- /api/movies/{tmdb_id}
+- /api/movies/{tmdb_id}/recommendations
+- /api/auth/register
+- /api/auth/login
+- /api/profile
+- /api/watchlist
+- /api/ratings
+- /api/recommendations
+
 ## Important
-- Never expose TMDB API key in frontend code.
-- Backend reads TMDB credentials from environment variables.
-- The app is designed to work with a PostgreSQL database in production while falling back to SQLite locally when needed.
+TMDB API keys must stay in the backend environment only. Never expose them in frontend code.

@@ -1,10 +1,44 @@
-fastapi==0.115.0
-uvicorn[standard]==0.30.1
-sqlalchemy==2.0.35
-pydantic==2.9.2
-pydantic-settings==2.5.2
-python-jose[cryptography]==3.3.0
-passlib[bcrypt]==1.7.4
-requests==2.32.2
-python-multipart==0.0.1
-numpy==2.1.2
+import { Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
+import HomePage from './pages/HomePage';
+import TrendingPage from './pages/TrendingPage';
+import NewReleasesPage from './pages/NewReleasesPage';
+import TopRatedPage from './pages/TopRatedPage';
+import LanguagesPage from './pages/LanguagesPage';
+import LanguagePage from './pages/LanguagePage';
+import GenresPage from './pages/GenresPage';
+import GenrePage from './pages/GenrePage';
+import SearchPage from './pages/SearchPage';
+import MovieDetailPage from './pages/MovieDetailPage';
+import WatchlistPage from './pages/WatchlistPage';
+import AuthPage from './pages/AuthPage';
+import ProfilePage from './pages/ProfilePage';
+import RecommendationsPage from './pages/RecommendationsPage';
+
+function App() {
+  return (
+    <div className="app-shell min-h-screen text-white">
+      <Header />
+      <main className="mx-auto max-w-7xl px-4 py-8 lg:px-8">
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/trending" element={<TrendingPage />} />
+          <Route path="/new-releases" element={<NewReleasesPage />} />
+          <Route path="/top-rated" element={<TopRatedPage />} />
+          <Route path="/languages" element={<LanguagesPage />} />
+          <Route path="/language/:language" element={<LanguagePage />} />
+          <Route path="/genres" element={<GenresPage />} />
+          <Route path="/genre/:genre" element={<GenrePage />} />
+          <Route path="/search" element={<SearchPage />} />
+          <Route path="/movie/:id" element={<MovieDetailPage />} />
+          <Route path="/watchlist" element={<WatchlistPage />} />
+          <Route path="/auth" element={<AuthPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/recommendations" element={<RecommendationsPage />} />
+        </Routes>
+      </main>
+    </div>
+  );
+}
+
+export default App;
